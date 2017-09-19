@@ -1,5 +1,5 @@
-TITLE
-=====
+COMP 116 Lab 3 (Packet Sleuth) -- Adon Shapiro
+==============================================
 
 set1.pcap
 ---------
@@ -117,16 +117,21 @@ set3.pcap
 17. user: lb@greaterhealth4all.com, pass: @Cts238truth used IMAP to connect to
 	64.68.200.59, port 143
 18. It seems legit. There are valid responses from the server and some
-	interaction with an IMAP mailbox follows the authentication.
+	interactions with an IMAP mailbox follow the authentication.
 
 set4.pcap
 ---------
-19. 3
-20. 130.64.23.35 at www.cs.tufts.edu, port 80
-21. idk
+19. Three username-password pairs
+20. Each pair used HTTP to connect to www.cs.tufts.edu at 130.64.23.35, port 80
+21. Valid/Invalid Pairs
+	* user: DeannaBessy, pass: WillBeComingBackToRecruit is invalid
+	* user: AnneOursler, pass: IsAnExpertOnInternetOfThings is invalid
+	* user: GoGetMeABeer, DafuqIsThisShit? is invalid
 
 General Questions
 -----------------
-22. ettercap | grep
-23. i didn't yet
-24. don't enter sensitive information if you are not using a secure protocol
+22. I used ettercap on the pcaps and piped the output through grep, searching
+	for strings containing "PASS"
+23. I followed the TCP stream in wireshark and guessed based on the responses
+	from the server.
+24. Don't enter sensitive information over insecure, unencrypted protocols.
