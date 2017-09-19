@@ -19,4 +19,29 @@ set1.pcap
 set2.pcap
 ---------
 10. 76804 packets
+11. I found five username-password pairs, but they are all the same pair. So
+	only one unique pair.
+12. user: b4ckd00r@protonmail.ch, pass: Apartamento123! used HTTP to connect to
+	thiscrush.com at 104.245.88.151, port 80
+13. idk
+14. umm
 
+set3.pcap
+---------
+15. 81266 packets
+16. again just one
+17. user: lb@greaterhealth4all.com, pass: @Cts238truth used IMAP to connect to
+	64.68.200.59, port 143
+18. idk
+
+set4.pcap
+---------
+19. 3
+20. 130.64.23.35 at www.cs.tufts.edu, port 80
+21. idk
+
+General Questions
+-----------------
+22. ettercap | grep
+23. i didn't yet
+24. don't enter sensitive information if you are not using a secure protocol
