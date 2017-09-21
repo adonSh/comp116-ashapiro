@@ -25,7 +25,7 @@ set2.pcap
 	thiscrush.com at 104.245.88.151, port 80
 13. Seems legit. There's a valid http response (redirect to php script), and
 	traffic continues afterward.
-14. All IPs and domains:
+14. All IPs and domains (found with "tshark -r set2.pcap -q -z hosts, ipv4"):
 	* 172.217.5.202 -- googleapis.l.google.com
 	* 172.217.4.170 -- googleapis.l.google.com
 	* 216.115.100.124 -- flickr-panda-police.a00.yahoodns.net
@@ -133,5 +133,9 @@ General Questions
 22. I used ettercap on the pcaps and piped the output through grep, searching
 	for strings containing "PASS"
 23. I followed the TCP stream in wireshark and guessed based on the responses
-	from the server.
-24. Don't enter sensitive information over insecure, unencrypted protocols.
+	from the server. Valid username-password pairs got positive responses
+	from the server and were often followed by additional traffic. Invalid
+	pairs received a 401 response from the server because their credentials
+	could not be validated.
+24. Don't enter sensitive information over insecure, unencrypted protocols or
+	on public networks.
