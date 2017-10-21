@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2.7
 import imghdr
 import base64
-import logging 
-logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
 from scapy.all import *
 
 image = b''
