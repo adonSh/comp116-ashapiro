@@ -3,6 +3,7 @@ from __future__ import print_function
 import sys
 from scapy.all import *
 
+# CONSTANTS
 FIN = 0x01
 SYN = 0x02
 RST = 0x04
@@ -22,25 +23,35 @@ def alert(incident):
 	print(incident + '!')
 
 def analyze(pcap):
-	null = False
-	fin = [ False, False, False ]
-	xmas = False
+	null = 0
+	nseq = 0
+	fin = 0
+	fseq = 0
+	xmas = 0
+	xseq = 0
 	for packet in pcap:
 		try:
-			if packet[TCP].flags == 0:
-				null = True
+			if packet[TCP].flags == 0 and packet[TCP].seq == nseq:
+				null += 1
+			else:
+				null = 1
+				nseq = packet[TCP].seq
 			if packet[TCP].flags == FIN:
-				if fin[0]:
-					fin[1] = True
-				if fin[1]:
-					fin[2] = True
-				else:
-					fin[0] = True
-			if packet[TCP].flags & FIN & PSH & URG:
-				xmas = True
+				fin += 1
+			if packet[TCP].flags == FIN | PSH | URG:
+				xmas += 1
+			if 'PASS' in packet[TCP].load:
+				print('found a password in cleartext')
 		except IndexError:
 			pass
-	print('null: ' + str(null) + '\nfin: ' + str(fin[0] and fin[1] and fin[0]))
+		except AttributeError:
+			pass
+	if null > 5:
+		print('null')
+	if fin > 20:
+		print('fin')
+	if xmas > 5:
+		print('xmas')
 
 def sniff_live(iface):
 	print('sniffing')
@@ -50,8 +61,12 @@ try:
 	if args[0] == '-h' or args[0] == '--help':
 		print(USAGE, end='')
 	elif args[0] == '-i':
+		print('sniffing on ' + args[1] + ' ...')
 		try:
-			sniff_live(args[1])
+			sniff(iface=args[1], prn=sniff_live)
+		except socket.error:
+			print('ERROR: interface not found')
+			exit(1)
 		except IndexError:
 			print(USAGE, end='')
 			exit(1)
@@ -69,3 +84,8 @@ try:
 		exit(1)
 except IndexError:
 	print('sniffing on eth0')
+	try:
+		sniff(iface='eth0', prn=sniff_live)
+	except socket.error:
+		print('ERROR: interface not found')
+		exit(1)
