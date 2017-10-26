@@ -24,18 +24,12 @@ def alert(incident):
 
 def analyze(pcap):
 	null = 0
-	nseq = 0
 	fin = 0
-	fseq = 0
 	xmas = 0
-	xseq = 0
 	for packet in pcap:
 		try:
-			if packet[TCP].flags == 0 and packet[TCP].seq == nseq:
+			if packet[TCP].flags == 0:
 				null += 1
-			else:
-				null = 1
-				nseq = packet[TCP].seq
 			if packet[TCP].flags == FIN:
 				fin += 1
 			if packet[TCP].flags == FIN | PSH | URG:
@@ -46,8 +40,8 @@ def analyze(pcap):
 			pass
 		except AttributeError:
 			pass
-	if null > 5:
-		print('null')
+		if null != 0 and null % 1000 == 0:
+			print('null')
 	if fin > 20:
 		print('fin')
 	if xmas > 5:
