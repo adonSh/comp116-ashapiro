@@ -68,6 +68,7 @@ def main(args):
 
 # analyze static set of pre-captured packets
 def analyze(pcap):
+	# flags and counters
 	num = 0
 	null = 0
 	fin = 0
@@ -80,6 +81,7 @@ def analyze(pcap):
 
 	for packet in pcap:
 		try:
+			# NULL scan
 			if packet[TCP].flags == 0:
 				if packet[IP].src == attacker:
 					null += 1
@@ -89,6 +91,7 @@ def analyze(pcap):
 				if null % 1000 == 0:
 					num += 1
 					alert('NULL', packet[IP].src, num)
+			# FIN scan
 			elif packet[TCP].flags == FIN:
 				if packet[IP].src == attacker:
 					fin += 1
@@ -98,6 +101,7 @@ def analyze(pcap):
 				if fin % 1000 == 0:
 					num += 1
 					alert('FIN', attacker, num)
+			# XMAS scan
 			elif packet[TCP].flags == FIN | PSH | URG:
 				if packet[IP].src == attacker:
 					xmas += 1
@@ -107,6 +111,7 @@ def analyze(pcap):
 				if xmas % 1000 == 0:
 					num += 1
 					alert('XMAS', attacker, num)
+			# HTTP AUTH passwords
 			if packet[TCP].dport == 80 and 'Authorization' in packet[TCP].load:
 				attacker = packet[IP].src
 				start = packet[TCP].load.find('Basic') + 6
@@ -115,6 +120,7 @@ def analyze(pcap):
 				s = base64.b64decode(s).split(':')
 				num += 1
 				alert('password', attacker, num, user=s[0], pswd=s[1], pro='HTTP')
+			# FTP passwords
 			elif packet[TCP].dport == 21:
 				if 'USER' in packet[TCP].load:
 					attacker = packet[IP].src
@@ -122,6 +128,7 @@ def analyze(pcap):
 				if 'PASS' in packet[TCP].load and packet[IP].src == attacker:
 					num += 1
 					alert('password', attacker, num, pro='FTP')
+			# IMAP passwords
 			elif packet[TCP].dport == 143:
 				if 'LOGIN' in packet[TCP].load:
 					attacker = packet[IP].src
@@ -130,6 +137,7 @@ def analyze(pcap):
 					pswd = load[load.index('LOGIN')+2]
 					num += 1
 					alert('password', attacker, num, user=user, pswd=pswd, pro='IMAP')
+			# POP3 passwords
 			elif packet[TCP].dport == 110:
 				if packet[IP].src == attacker and pauth == True:
 					pauth = False
@@ -144,6 +152,7 @@ def analyze(pcap):
 		except AttributeError:
 			pass
 
+# print the proper alert
 def alert(incident, src, num, user='', pswd='', pro = ''):
 	if incident == 'XMAS' or incident == 'FIN' or incident == 'NULL' or \
 	   incident == 'Nikto':
