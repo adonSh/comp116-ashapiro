@@ -1,9 +1,10 @@
 COMP116 Lab 5 -- Python & Scapy
 ===============================
 
-1. As far as I can tell, everything has been implemented correctly.
+1. Alarm.py does not detect Nikto scans and live sniffing is iffy. As far as I
+	know everything else has been implemented correctly.
 2. I did not collaborate with anyone on this assignment.
-3. I probably spent about x hours on this assignment.
+3. I probably spent about 10 hours on this assignment.
 
 Other Questions
 ---------------
