@@ -1,5 +1,7 @@
 #!/usr/bin/env python2.7
 from __future__ import print_function
+import base64
+import re
 import sys
 from scapy.all import*
 
@@ -69,6 +71,7 @@ def analyze(pcap):
 	attacker = ''
 	user = ''
 	pswd = ''
+	pauth = False
 
 	for packet in pcap:
 		try:
@@ -99,26 +102,52 @@ def analyze(pcap):
 				if xmas % 1000 == 0:
 					num += 1
 					alert('XMAS', attacker, num)
-			if 'USER' in packet[TCP].load:
-				user = packet[TCP].load[5:]
-			if 'PASS' in packet[TCP].load:
-				pswd = packet[TCP].load[5:]
+			if packet[TCP].dport == 80 and 'Authorization' in packet[TCP].load:
+				attacker = packet[IP].src
+				start = packet[TCP].load.find('Basic') + 6
+				end = packet[TCP].load.find('==')
+				s = packet[TCP].load[start:end] + '=='
+				s = base64.b64decode(s).split(':')
 				num += 1
-				alert('password', packet[IP].src, num, user=user, pswd=pswd)
+				alert('password', attacker, num, user=s[0], pswd=s[1], pro='HTTP')
+			elif packet[TCP].dport == 21:
+				if 'USER' in packet[TCP].load:
+					attacker = packet[IP].src
+					user = packet[TCP].load
+				if 'PASS' in packet[TCP].load and packet[IP].src == attacker:
+					num += 1
+					alert('password', attacker, num, pro='FTP')
+			elif packet[TCP].dport == 143:
+				if 'LOGIN' in packet[TCP].load:
+					attacker = packet[IP].src
+					load = packet[TCP].load.split(' ')
+					user = load[load.index('LOGIN')+1]
+					pswd = load[load.index('LOGIN')+2]
+					num += 1
+					alert('password', attacker, num, user=user, pswd=pswd, pro='IMAP')
+			elif packet[TCP].dport == 110:
+				if packet[IP].src == attacker and pauth == True:
+					pauth = False
+					s = base64.b64decode(packet[TCP].load).split('\x00')
+					num += 1
+					alert('password', attacker, num, user=s[1], pswd=s[2], pro='IMAP')
+				if 'AUTH PLAIN' in packet[TCP].load:
+					attacker = packet[IP].src
+					pauth = True
 		except IndexError:
 			pass
 		except AttributeError:
 			pass
 
-def alert(incident, src, num, user='', pswd=''):
+def alert(incident, src, num, user='', pswd='', pro = ''):
 	if incident == 'XMAS' or incident == 'FIN' or incident == 'NULL' or \
 	   incident == 'Nikto':
 		msg = ('ALERT #' + str(num) + ': ' + incident + ' scan is detected '
                'from ' + src + ' (TCP)!')
 	else:
 		msg = ('ALERT #' + str(num) + ': Username and password sent '
-               'in-the-clear from ' + src + ' (TCP) (' + user + ':' + pswd + \
-		       ')!')
+               'in-the-clear from ' + src + ' (' + pro + ') (' + user + ':' + \
+		       pswd + ')!')
 	print(msg)
 
 main(sys.argv[1:])

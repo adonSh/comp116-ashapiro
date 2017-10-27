@@ -7,8 +7,13 @@ COMP116 Lab 5 -- Python & Scapy
 
 Other Questions
 ---------------
-1. idk
-2. haven't got that far
+1. Based on the IP addresses alone, it is difficult to draw any sort of
+	conclusion. They come from all over, the only pattern that I can see
+	being that there are more IP's from more developed countries which is
+	pretty meaningless. So I can't say that I'm confident that Russia was
+	reponsible based on this information alone.
+2. They could be better, but they're mostly functional on basic data. I guess
+	they're "just OK".
 3. idek
 
 	--Adon Shapiro

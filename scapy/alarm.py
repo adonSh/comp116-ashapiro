@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 from __future__ import print_function
 import sys
+import base64
 from scapy.all import *
 
 # CONSTANTS
@@ -34,7 +35,7 @@ def analyze(pcap):
 				fin += 1
 			if packet[TCP].flags == FIN | PSH | URG:
 				xmas += 1
-			if 'PASS' in packet[TCP].load:
+			if packet[TCP].dport == 80 and 'Authorization' in packet[TCP].load:
 				print('found a password in cleartext')
 		except IndexError:
 			pass
