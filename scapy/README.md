@@ -15,6 +15,8 @@ Other Questions
 	reponsible based on this information alone.
 2. They could be better, but they're mostly functional on basic data. I guess
 	they're "just OK".
-3. idek
+3. The incidents it can detect it does so pretty well. I would just like to
+	finish it if I had the time and also do it in a cleaner way. I mean it
+	works but it ain't pretty.
 
 	--Adon Shapiro
