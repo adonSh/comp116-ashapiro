@@ -6,6 +6,7 @@ as numerous cross-site scripting vulnerabilities that were not relevant to
 finding keys in the game. The Veracode scan did not catch all the
 vulnerabilities related to the keys being stored in plaintext or base64, but I
 suppose there was no way for it to know that the keys were "sensitive
-information." I wish the scan provided
+information." I wish the scan provided more information about the configuration
+of the machine rather than just vulnerabilities in the code.
 
-	--Adon Shapiro
+-Adon Shapiro
