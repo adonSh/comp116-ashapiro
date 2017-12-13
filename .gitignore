@@ -2,3 +2,7 @@
 *.pcap
 *.jpeg
 *.swp
+*.aux
+*.out
+*.log
+finalproject/ignore/*

@@ -27,44 +27,47 @@ is KRACK.
 In October 2017, researchers at the University of Leuven published details
 of a vulnerability they had discovered in the WPA2 protocol that secures Wi-Fi
 connections. They called it KRACK (Key Reinstallation AttaCK) because of the
-way it takes advantage of a bug in WPA2 that allows the re-use of insecure
+way it takes advantage of a bug in WPA2 that allows the re-use of 
 cryptographic keys. KRACK is significant because it is a fundamental weakness
 not in a specific piece of software, but rather in the Wi-Fi standard itself,
 and so everyone who uses Wi-Fi was susceptible to the attack. Because of its
 recentness and its far-reaching impact, KRACK is a perfect lens through which
 to view the problem of ethical disclosure.
 
-\newpage
 \begin{doublespace}
 \section*{Introduction}
 Disclosure, as it pertains to cyber-security, refers to the manner in which
 people are made aware of vulnerabilities in their software. This can mean many
 different things, however. To formalize different approaches to disclosure, it
 is helpful to define three roles in the process: Vendors, Customers, and
-Reporters.\footnote{Christey \& Wysopal} As defined by Christey and Wysopal,
+Reporters. As defined by Christey and Wysopal,
 a Vendor is ``an individual or organization who provides, develops, or
-maintains software, hardware, or services, possibly for free.'' A customer is 
+maintains software, hardware, or services,'' a customer is 
 an ``end user of the software, hardware, or service that may be affected by the
 vulnerability,'' and a Reporter is an ``individual or organization that informs
-(or attempts to inform) the Vendor of the vulnerability.''\footnotemark[1] The crux of the
-debate is how different approaches to disclosure affect Customers. The
+(or attempts to inform) the Vendor of the vulnerability.''\footnote{Christey \& Wysopal, \textit{Responsible Vulnerability Disclosure Process}.}
+The crux of the
+issue is how different approaches to disclosure affect Customers, and the
 ``different methods'' refer to the actions and reactions of Reporters and
 Vendors. At the extreme ends of the disclosure spectrum we have full disclosure
-and full secrecy. Full disclosure is when a Reporter makes their discovery
+and non-disclosure. Full disclosure is when a Reporter makes their discovery
 completely public with little to no consideration given to the consequences of
 publicizing an exploit. The reasoning behind this method is generally that the
-best way to fix a vulnerability is to have it be as noticeable as possible, and
+best way to get a Vendor to fix a vulnerability is to have it be as noticeable
+as possible, and
 that the consequences of malicious individuals learning of the attack are
-negligible.
-Full secrecy is when a Reporter alerts a Vendor, but neither Reporter nor
-Vendor alert the public, sometimes even after the vulnerability has been taken
+negligible, as it may well have already been known by less ethical hackers.\footnote{Stephen A. Shepherd, \textit{ Vulnerability Disclosure: How do we define Responsible Disclosure}.}
+Non-disclosure involves keeping the veulnerability as secret as possible. If a
+Reporter even alerts a Vendor, it is unlikely either will
+alert the public, sometimes even after the vulnerability has been taken
 care of. The rationale being that Customers will be safest if the exploit is
-kept completely secret. Keeping software vulnerabilities secret, the argument goes, keeps them out of the hands of the hackers.\footnote{schneier}
+kept completely secret, since no one with questionable motives will be aware
+either.\footnote{schneier}
 Of course, these are both extremes and in reality, most
 vulnerabilities are disclosed in a manner somewhere between these two
-approaches. Most people try to identify a happy medium that they call
-``responsible disclosure,'' but what this actually means is also a matter of
-contention.
+approaches. Most bugs are disclosed in manner known as
+``responsible disclosure,'' which attempts to find a happy medium, but what
+this actually means is also a matter of contention.
 
 KRACK is an inherent weakness in the WPA2 protocol that
 secures protected Wi-Fi networks. Essentially, the vulnerability allows an
@@ -196,18 +199,47 @@ disclosure. Thus, an earlier full disclosure would have been more ethical.
 %KRACK's effects. Essentially KRACK was full disclosure, and its effects were
 %pretty minimal. So like secrecy is bogus.
 
+\end{doublespace}
 \newpage
 \section*{\hfil References \hfil}
-\begin{itemize}[label=]
-	\item \url{https://www.krackattacks.com/}
-	\item \url{https://www.schneier.com/essays/archives/2007/01/schneier_full_disclo.html}
-  \item \url{https://web.archive.org/web/20060328012516/http://infosecuritymag.techtarget.com/articles/january01/columns_curmudgeons_corner.shtml}
-  \item \url{https://tools.ietf.org/html/draft-christey-wysopal-vuln-disclosure-00}
-  \item \url{https://www.sans.org/reading-room/whitepapers/threats/define-responsible-disclosure-932}
-  \item \url{https://www.bleepingcomputer.com/news/security/new-krack-attack-breaks-wpa2-wifi-protocol/}
-  \item IEEE 802.11i-2004
-  \item \url{https://www.kb.cert.org/vuls/id/228519}
-\end{itemize}
+\noindent \hangindent=2em
+Vanhoef, Mathy.
+\textit{Key Reinstallation Attacks Breaking WPA2 by forcing nonce reuse}. \\
+\url{https://www.krackattacks.com/}.
 
-\end{doublespace}
+\noindent \hangindent=2em
+Schneier, Bruce.
+\textit{Full Disclosure of Security Vulnerabilities a 'Damned Good Idea'}. \\
+\url{https://www.schneier.com/essays/archives/2007/01/schneier_full_disclo.html}.
+
+\noindent \hangindent=2em
+Christey, Steve \& Chris Wysopal.
+\textit{Responsible Vulnerability Disclosure Process}. \\
+\url{https://tools.ietf.org/html/draft-christey-wysopal-vuln-disclosure-00}.
+
+\noindent \hangindent=2em
+Cimpanu, Catalin.
+\textit{New KRACK Attack Breaks WPA2 WiFi Protocol}. \\
+\url{https://www.bleepingcomputer.com/news/security/new-krack-attack-breaks-wpa2-wifi-protocol/}.
+
+\noindent \hangindent=2em
+IEEE Standards.
+\textit{IEEE 802.11i-2004: Amendment 6: Medium Access Control (MAC) Security Enhancements}.
+\url{http://standards.ieee.org/getieee802/download/802.11i-2004.pdf}.
+
+\noindent \hangindent=2em
+Shepherd, Stephen A.
+\textit{Vulnerability Disclosure: How do we define Responsible Disclosure}. \\
+\url{https://www.sans.org/reading-room/whitepapers/threats/define-responsible-disclosure-932}.
+
+%\begin{itemize}[label=]
+%	\item \url{https://www.schneier.com/essays/archives/2007/01/schneier_full_disclo.html}
+%  \item \url{https://web.archive.org/web/20060328012516/http://infosecuritymag.techtarget.com/articles/january01/columns_curmudgeons_corner.shtml}
+%  \item \url{https://tools.ietf.org/html/draft-christey-wysopal-vuln-disclosure-00}
+%  \item \url{https://www.sans.org/reading-room/whitepapers/threats/define-responsible-disclosure-932}
+%  \item \url{https://www.bleepingcomputer.com/news/security/new-krack-attack-breaks-wpa2-wifi-protocol/}
+%  \item IEEE 802.11i-2004
+%  \item \url{https://www.kb.cert.org/vuls/id/228519}
+%\end{itemize}
+
 \end{document}
