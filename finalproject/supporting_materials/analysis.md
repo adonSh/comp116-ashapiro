@@ -63,5 +63,5 @@ static int wpa_supplicant_install_gtk(struct wpa_sm *sm,
  /* After this if block the code is identical to the version that predates KRACK. */
 }
 ```
+ --Adon Shapiro
 
-	--Adon Shapiro
