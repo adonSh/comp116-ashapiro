@@ -62,10 +62,10 @@ Reporter even alerts a Vendor, it is unlikely either will
 alert the public, sometimes even after the vulnerability has been taken
 care of. The rationale being that Customers will be safest if the exploit is
 kept completely secret, since no one with questionable motives will be aware
-either.\footnote{schneier}
+either.\footnotemark[2]
 Of course, these are both extremes and in reality, most
 vulnerabilities are disclosed in a manner somewhere between these two
-approaches. Most bugs are disclosed in manner known as
+approaches. Most bugs, KRACK included, are disclosed in manner known as
 ``responsible disclosure,'' which attempts to find a happy medium, but what
 this actually means is also a matter of contention.
 
@@ -75,66 +75,68 @@ attacker to authenticate themselves by forcing the network to reinstall an
 already in-use cryptographic key (thus the name KRACK, for Key Reinstallation
 AttaCK). The exploit was discovered by Belgian researchers Mathy Vanhoef and
 Frank Piessens at KU Leuven in 2016 and published a paper with the results
-of their findings in October 2017, however some affected vendors were notified
-earlier than this.\footnote{bleepingcomputer} On the spectrum of disclosure,
+of their findings in October 2017, however some affected Vendors were notified
+earlier than this.\footnote{Catalin Cimpanu, \textit{New KRACK Attack Breaks WPA2 WiFi Protocol}.} On the spectrum of disclosure,
 this is what most people would label responsible disclosure with perhaps a bit
 of a bent towards full disclosure. Though some vendors were alerted before the
 bug was fully disclosed, ultimately the vulnerability was made fully
-known to the public, and vendor's soon realized patches to their
+known to the public, and soon after, most Vendors released patches to their
 implementations of WPA2.
 
 \section*{To the Community}
 So far, it may seem that KRACK is unremarkable. It was discovered by academic
 researchers, disclosed in a relatively uncontroversial manner, and quickly
 patched. But it is easy to overlook the severity of the exploit. For one thing,
-almost anyone who uses the internet is susceptible to it. WPA2 is the standard
+almost anyone who uses the internet is susceptible to it. I use the
+present-tense because the fact that a patch has been released has absolutely
+no bearing on whether a user has a properly updated system, especially
+considering how recently the bug was disclosed. WPA2 is the standard
 for secure wireless access and is relied upon for protecting almost every
-modern Wi-Fi network. It is also such a recently disclosed bug that many people
-are likely still susceptible to the attack if their vendor has not yet patched
-their WPA2 implementation or even if the customer fails to keep their system
-regularly up-to-date.
+modern Wi-Fi network, so the only way to be immune from KRACK without a patched
+WPA2 implementation is to use a wired connection.
 
-In terms of disclosure, KRACK's fresh discovery allows to view the
+In terms of disclosure, KRACK's fresh discovery allows us to view the
 ramifications of its disclosure in real time, and its academic source gives it
-an unusual amount of legitimacy. All told, it is a new and interesting
+an unusual amount of legitimacy. All told, it is an interesting
 opportunity to gain new perspective on the old debate.
 
-%So if this is business as usual, why do we care about KRACK? For one thing,
-%because of its severity. No one is unaffected. It is also fresh and people
-%are likely still vulnerable.
-%
-%And the disclosure question is always relevant. KRACK provides us a new and
-%unique opportunity to look at the ramifications as they unfold.
-%
 \section*{Technical Details of the Exploit}
 Since KRACK is a fundamental vulnerability in the WPA2 protocol, some
-understanding of the protocol is necessary to understand the specifics of
-KRACK. Wi-Fi Protected Access II (WPA2) is the name given to implementations of
-the standard outlined in IEEE 802.11i-2004. The standard augments a Robust
-Security Network (RSN) with the addition of a four-way Handshake and a Group
-Key Handshake. First a user must provide a pre-shared keyy for initial
+understanding of the protocol is necessary to comprehend the specifics of
+a KRACK attack. Wi-Fi Protected Access II (WPA2) is the name given to
+implementations of the standard for secure Wi-Fi outlined in IEEE 802.11i-2004.
+The key elements of the protocol which allow encrypted traffic to flow between
+a client and an access-point without transmitting the encryption key itself
+are the four-way handshake and group
+key handshake. First, a user must provide a pre-shared key for initial
 authentication (the Wi-Fi password). A secret Pairwise Master Key (PMK) is then
 generated for the session. Next, the four-way handshake verifies that both the
 access point and the client have the proper PMK without needing to disclose the
 key. Once this is established, two more keys are generated: the Pairwise
-Transient Key (PTK) and the Group Temporal Key (GTK).\footnote{IEEE802.11i}
+Transient Key (PTK) and the Group Temporal Key (GTK).\footnote{IEEE802.11i-2004.}
 
 KRACK exploits a vulnerability in the four-way handshake process of the
-protocol. An attacker can intercepts the encrypted traffic of the handshake and
-need only resend the third handshake to reset the WPA2 encryption key. Every
+protocol. The GTK is installed after the third message of the four-way
+handshake, but to account for dropped or interrupted connections, WPA2 allows
+the re-transmission of this message.
+An attacker can intercept the encrypted traffic of the handshake between
+another (legitimate) user and the access point and
+need only resend the third handshake to reset the WPA2 encryption key. This is
+the ``nonce reuse'' described in the title of Vanhoef's paper. Every
 time the key is reset the data sent over the network will be encrypted with
-the same values, allowing traffic to be gradually decrypted until the entire
-key is decrypted and the network no longer secure. \footnote{krackattacks} The
-attack is particularly devastating against wpa\_supplicant, the open-source
+the same key, allowing traffic to be gradually decrypted until the entire
+key is decrypted and the network no longer secure. \footnote{Mathy Vanhoef, \textit{Key Reinstallation Attacks Breaking WPA2 by forcing nonce reuse}.}
+The attack is particularly devastating against wpa\_supplicant, the open-source
 Wi-Fi client typically used on Linux operating systems. This implementation,
 which is also found in many Android phones, allows the attacker to simply
-install an all-zero encryption key with no need at all for the real key.
+install an all-zero encryption key with no need at all for the real key.\footnotemark[5]
 
 \subsection*{Defense}
 Unfortunately, without a patched implementation of WPA2, there is no way to
 defend against a KRACK attack. Fortunately, many vendors have released patches
 that completely fix the issue. Mathy Vanhoef, the researcher who discovered the
-vulnerability provides scripts to test your machine for the vulnerabiliy.
+vulnerability, provides scripts to test your machine for the vulnerability on
+the website he created to provide information about the KRACK attack.
 
 \section*{Disclosure as it Pertains to KRACK}
 I said earlier that most people would consider Vanhoef's disclosure
@@ -154,35 +156,57 @@ defined by Christey \& Wysopal, responsible disclosure aims to:
   \item Minimize the amount of time and resources required to manage
    vulnerability information.
   \item Facilitate long-term research and development of techniques,
-   products, and processes for avoiding or mitigating vulnerabilities.
+   products, and processes for avoiding or mitigating vulnerabilities.\footnote{Christey \& Wysopal}
 \end{enumerate}
 \begin{doublespace}
-KRACK seems to follow this model by first notifying vendors, etc. following
-Christey \& Wysopal's process outline for responsible disclosure. C \& W also
-outline the responsibilities of the reporter.
+To these ends Christey \& Wysopal also outline the responsibilities of both
+Vendors and Reporters, which the KRACK researchers have followed perfectly.\footnotemark[6]
+The Reporters initially contacted Vendors, alerting them to the
+vulnerability\footnote{Cimpanu}, so that they might protect their Customers.
+It is not known if the Vendors in this scenario also fulfilled their
+responsibilities, but it is interesting to note that no patches were released
+until after the exploit was fully and publicly disclosed.
 
 KRACK is somewhat unique in that it is a product of academic research, but is
-otherwise unremarkable in terms of its disclosure. Most would agree that it
-was disclosed in a ``responsible'' manner. Vendors were alerted first and then
-customers later. So what can we learn from this? First of all, it is worth
+otherwise unremarkable in terms of its disclosure. It
+was disclosed in a ``responsible'' manner that has spawned little controversy.
+So what can we learn from this? First of all, it is worth
 mentioning that despite its severity, the overall impact of KRACK has been low.
 There have been no documented, high-profile cases of serious data being
-compromised by a KRACK attack and many vendors (google) took almost a whole
-month to roll out patches.
+compromised by a KRACK attack even though some Vendors took
+almost a whole month to roll out patches.
 
-use other examples to explain how krack was minimal.
-
-KRACK was disclosed ``responsibly,'' but what good did it really do. Vendors
+KRACK was disclosed ``responsibly,'' and this would usually be cited as a
+reason for the minimal impact of the vulnerability, but the timeline of
+disclosure doesn't support this hypothesis. Vendors
 were notified months before the paper was published, but in many cases patches
 were not released until a month after the disclosure date, and some products
-still have yet to be patched. Bruce Schneier.
+still have yet to be patched. The best response to the bug only occurred after
+it was fully disclosed to the public. Bruce Schneier provides some insight
+into this phenomenon while arguing against non-disclosure: ``To a software
+company, vulnerabilities are largely an externality. That is, they affect
+you -- the user -- much more than thy affect it.''\footnote{Bruce Schneier, \textit{Full Disclosure of Security Vulnerabilities a 'Damned Good Idea'}.}
+He argues that to most Vendors, vulnerabilities are more of a public relations
+problem than a software problem, and that Vendors usually rely on secrecy
+for security rather than actually fixing their code. It is usually only after
+an exploit is made public knowledge that Vendors will be motivated to fix their
+broken software to avoid bad press.\footnotemark[8] This is objectively bad
+policy. If an ethical hacker can discover a vulnerability, so can an unethical
+one, and secrecy does nothing to protect Customers. However, the Vendors
+involved in the disclosure of KRACK seem to have precisely followed this
+predictive model. Though some of them were notified months before the Reporters
+research was disclosed to the public, no fixes for KRACK attacks were released
+until after public disclosure, and some Vendors still have not fixed the
+problem months after disclosure.
 
 Essentially, the ``responsible'' aspects of KRACK's disclosure did nothing to
-mitigate its effect and its impact was minimal after full disclosure despite
-being quite severe. The problem is that a reporter can act perfectly
-responsibly but the whole thing can be ruined by vendors who cannot be held
-accountable. So the vendors are useless and full disclosure really doesn't 
-have that many risks.
+mitigate its effect and its impact was minimal after full disclosure despite it
+being a quite severe vulnerability, thus discounting the argument that
+disclosing vulnerabilities makes Customers more at risk. The problem is that a
+Reporter can act perfectly
+responsibly but the whole process can be ruined by Vendors who cannot be held
+accountable. With these facts taken into account, the only truly responsible
+disclosure that satisfies Christey and Wysopal's goals is full disclosure.
 
 \section*{Conclusion}
 KRACK was easily the most significant vulnerability discovered in 2017.
@@ -191,13 +215,16 @@ wireless access point, it had the farthest-reaching scope of any such bug in
 recent memory. However, it has not had nearly as large of an impact as its
 potential implies. A significant mitigating factor in this and all software
 exploits is the manner in which the Reporter chooses to disclose the
-vulnerability. KRACK was by all means disclosed in a ``responsible'' manner,
-but could have been done better. If vendors were alerted early, they should
-have fixed it. They didn't, so what's the point. We only saw patches after full
-disclosure. Thus, an earlier full disclosure would have been more ethical.
-
-%KRACK's effects. Essentially KRACK was full disclosure, and its effects were
-%pretty minimal. So like secrecy is bogus.
+vulnerability, specifically the full disclosure aspect. KRACK was by all means
+disclosed in a ``responsible'' manner,
+but no response was enacted until the public became fully aware of the
+problem. If vendors were alerted early, they should
+have fixed it. They didn't, so the ``responsible'' response of the KRACK
+reporters was useless. We only saw patches after full
+disclosure, and this response is not at all out of the ordinary. Until
+Vendors can truly be held accountable for securing their software, the only
+truly responsible and ethical way to disclose vulnerabilities is fully to
+the public.
 
 \end{doublespace}
 \newpage
