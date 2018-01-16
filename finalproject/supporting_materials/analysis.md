@@ -41,7 +41,7 @@ key and prevents the encryption key from being reset.
 
 Code
 ----
-```
+```c
 static int wpa_supplicant_install_gtk(struct wpa_sm *sm,
 				      const struct wpa_gtk_data *gd,
 				      const u8 *key_rsc, int wnm_sleep)
